@@ -10,13 +10,17 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
+import android.widget.RemoteViews
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 
 class MyService : Service() {
     private var myReceiver: MyReceiver? = null
 
-    private val ANDROID_CHANNEL_ID = "com.example.simplerecorder"
-    private val NOTIFICATION_ID = 9999
+    companion object {
+        private const val ANDROID_CHANNEL_ID = "com.example.simplerecorder"
+        private const val NOTIFICATION_ID = 9999
+    }
 
     // 서비스가 최소 생성될 때 callback 함수
     override fun onCreate() {
@@ -68,10 +72,16 @@ class MyService : Service() {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
 
+            // Get the layouts to use in the custom notification
+            val notificationLayout = RemoteViews(packageName, R.layout.custom_notification)
+
             // Notification 알림 객체 생성
-            val builder = Notification.Builder(this, ANDROID_CHANNEL_ID)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText("SmartTracker Runnning")
+            val builder = NotificationCompat.Builder(this, ANDROID_CHANNEL_ID)
+                //.setContentTitle(getString(R.string.app_name))
+                //.setContentText("SmartTracker Running")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(notificationLayout)
             val notification = builder.build()
 
             // Notification 알림과 함께 Foreground 서비스 시작
