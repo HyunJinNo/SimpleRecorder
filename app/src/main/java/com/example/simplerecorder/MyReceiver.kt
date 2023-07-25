@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 
 class MyReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -13,7 +12,7 @@ class MyReceiver : BroadcastReceiver() {
                 Log.d("SimpleRecorder", "화면 꺼짐")
             }
             Intent.ACTION_SCREEN_ON -> {
-                Toast.makeText(context, "화면 켜짐", Toast.LENGTH_SHORT).show()
+                Log.d("SimpleRecorder", "화면 켜짐")
             }
             else -> {
 
