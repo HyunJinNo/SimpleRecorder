@@ -25,8 +25,7 @@ class MyService : Service() {
         // 브로드캐스트 리시버가 null 인 경우에만 실행
         if (myReceiver == null) {
             myReceiver = MyReceiver()
-            val filter = IntentFilter()
-            with (filter) {
+            val filter = IntentFilter().apply {
                 addAction(Intent.ACTION_SCREEN_OFF)
                 addAction(Intent.ACTION_SCREEN_ON)
             }
@@ -44,8 +43,7 @@ class MyService : Service() {
                 // 서비스가 최초 실행이 아닌 경우 onCreate 가 불리지 않을 수 있음.
                 if (myReceiver == null) {
                     myReceiver = MyReceiver()
-                    val filter = IntentFilter()
-                    with (filter) {
+                    val filter = IntentFilter().apply {
                         addAction(Intent.ACTION_SCREEN_OFF)
                         addAction(Intent.ACTION_SCREEN_ON)
                     }
