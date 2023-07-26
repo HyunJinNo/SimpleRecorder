@@ -30,5 +30,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, MyService::class.java)
             stopService(intent)
         }
+
+        // TODO: 삭제
+        binding.button.setOnClickListener {
+            val intent = Intent(applicationContext, RecordingActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
