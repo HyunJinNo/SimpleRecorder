@@ -9,36 +9,36 @@
     <TextView
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_gravity="center"
         android:layout_weight="5"
+        android:gravity="center_vertical"
         android:text="00:11"
         android:textSize="14sp" />
 
-    <Button
-        android:id="@+id/recordingButton"
+    <ImageButton
+        android:id="@+id/recordButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_gravity="center"
-        android:layout_margin="4dp"
         android:layout_weight="1"
-        android:text="녹음" />
+        android:backgroundTint="#3F51B5"
+        app:srcCompat="@drawable/ic_stat_pause_circle_filled" />
 
-    <Button
+    <ImageButton
         android:id="@+id/stopButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_gravity="center"
-        android:layout_margin="4dp"
         android:layout_weight="1"
-        android:text="종료" />
+        app:srcCompat="@drawable/ic_pause_circle_filled" />
 
-    <Button
+    <ImageButton
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:text="취소" />
+        app:srcCompat="@drawable/ic_cancel" />
 
 </LinearLayout>
