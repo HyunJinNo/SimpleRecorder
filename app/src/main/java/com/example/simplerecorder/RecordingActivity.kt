@@ -12,25 +12,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class RecordingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecordingBinding
     private var recorder: MediaRecorder? = null
-    private val recordingFilePath: String by lazy {
-        "${Environment.getExternalStorageDirectory().absolutePath}/recording.3gp"
-    }
     private var player: MediaPlayer? = null
-    private var filename = ""
+    private var filepath: String = ""
 
-    // Requesting permission to RECORD_AUDIO
+    // Requesting permissions
     private var permissionToRecordAccepted = false
     private var permissions: Array<String> = arrayOf(
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
+
+    private val dataList = mutableListOf<Array<String>>()
 
     companion object {
         private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
@@ -59,7 +56,7 @@ class RecordingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = AudioAdapter(arrayOf<String>("A", "B", "C"))
+        val adapter = AudioAdapter(dataList)
         binding.recyclerView.adapter = adapter
 
         initListeners()
@@ -86,7 +83,7 @@ class RecordingActivity : AppCompatActivity() {
     private fun startPlaying() {
         player = MediaPlayer().apply {
             try {
-                setDataSource(filename)
+                setDataSource(filepath)
                 prepare()
                 start()
             } catch (e: IOException) {
@@ -102,14 +99,12 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun startRecording() {
         val sdCard = Environment.getExternalStorageDirectory()
-
-        val tempPath = sdCard.absolutePath + "/Simple Recorder"
-        if (!File(tempPath).exists()) {
-            File(tempPath).mkdirs()
+        val dir = sdCard.absolutePath + "/Simple Recorder"
+        if (!File(dir).exists()) {
+            File(dir).mkdirs()
         }
 
-        val file = File(sdCard, "Simple Recorder/recorded.mp4")
-        val filepath = file.absolutePath
+        filepath = File(sdCard, "Simple Recorder/recorded.mp4").absolutePath
 
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC) // 오디오 소스 설정 (마이크)
@@ -125,14 +120,6 @@ class RecordingActivity : AppCompatActivity() {
 
             start()
         }
-
-        /*
-        recorder?.start() // 녹음 시작
-
-        recorder?.stop() // 녹음 중지
-        recorder?.reset() // You can reuse the object by going back to setAudioSource() step
-        recorder?.release() // Now the object cannot be reused.
-        */
     }
 
     private fun stopRecording() {
