@@ -26,7 +26,7 @@
         app:srcCompat="@drawable/ic_stat_pause_circle_filled" />
 
     <ImageButton
-        android:id="@+id/stopButton"
+        android:id="@+id/pauseButton"
         android:layout_width="wrap_content"
         android:layout_height="64dp"
         android:layout_gravity="center"

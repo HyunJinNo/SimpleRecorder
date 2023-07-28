@@ -7,6 +7,7 @@ import android.media.MediaRecorder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.IOException
 
@@ -48,6 +49,10 @@ class RecordingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRecordingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        val adapter = AudioAdapter(arrayOf<String>("A", "B", "C"))
+        binding.recyclerView.adapter = adapter
     }
 
     override fun onDestroy() {
@@ -115,5 +120,22 @@ class RecordingActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+    }
+
+    private fun initListeners() {
+        binding.recordButton.setOnClickListener {
+            binding.textView2.text = "startRecording"
+            startRecording()
+        }
+        binding.pauseButton.setOnClickListener {
+            binding.textView2.text = "pause"
+        }
+        binding.stopButton.setOnClickListener {
+            binding.textView2.text = "stopRecording"
+            stopRecording()
+        }
+        binding.cancelButton.setOnClickListener {
+            binding.textView2.text = "cancel"
+        }
     }
 }
