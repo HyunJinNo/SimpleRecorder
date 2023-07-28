@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class RecordingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecordingBinding
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
     private var filepath: String = ""
+    private var timeStamp: String = ""
 
     // Requesting permissions
     private var permissionToRecordAccepted = false
@@ -104,7 +107,8 @@ class RecordingActivity : AppCompatActivity() {
             File(dir).mkdirs()
         }
 
-        filepath = File(sdCard, "Simple Recorder/recorded.mp4").absolutePath
+        timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        filepath = File(sdCard, "Simple Recorder/${timeStamp}.m4a").absolutePath
 
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC) // 오디오 소스 설정 (마이크)
@@ -127,6 +131,11 @@ class RecordingActivity : AppCompatActivity() {
             stop()
             reset()
             release()
+
+            val filename = filepath.split("/").last().split(".").first()
+            val date = "${timeStamp.slice(0..3)}-${timeStamp.slice(4..5)}-${timeStamp.slice(6..7)}"
+            dataList.add(arrayOf(filename, "??:??:??", date))
+            binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
         }
         recorder = null
     }
