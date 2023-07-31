@@ -1,18 +1,19 @@
 package com.example.simplerecorder
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaMetadataRetriever
+import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.media.MediaRecorder
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore.Audio.Media
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.content.res.AppCompatResources
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
 import java.io.IOException
@@ -22,9 +23,8 @@ import java.util.Date
 class RecordingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecordingBinding
     private var recorder: MediaRecorder? = null
-    private var player: MediaPlayer? = null
     private var filepath: String = ""
-    private var timeStamp: String = ""
+    private var recordingState = RecordingState.BEFORE_RECORDING
 
     // Requesting permissions
     private var permissionToRecordAccepted = false
@@ -34,10 +34,8 @@ class RecordingActivity : AppCompatActivity() {
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
-    private val dataList = mutableListOf<AudioData>()
-
     companion object {
-        private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
+        private const val REQUEST_PERMISSIONS = 200
     }
 
     override fun onRequestPermissionsResult(
@@ -46,7 +44,7 @@ class RecordingActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+        permissionToRecordAccepted = if (requestCode == REQUEST_PERMISSIONS) {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         } else {
             false
@@ -62,63 +60,21 @@ class RecordingActivity : AppCompatActivity() {
         binding = ActivityRecordingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = AudioAdapter(dataList)
+        setSupportActionBar(binding.toolbar)
 
         initListeners()
-        requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dataList.clear()
-
-        if (isExternalStorageReadable()) {
-            val dir = Environment.getExternalStorageDirectory().absolutePath + "/Simple Recorder"
-            if (!File(dir).exists()) {
-                File(dir).mkdirs()
-            }
-
-            File(dir).listFiles()?.forEach {
-                dataList.add(getAudioData(it.absolutePath))
-                binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
-            }
-        }
+        requestPermissions(permissions, REQUEST_PERMISSIONS)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         recorder = null
-        player = null
     }
 
-    private fun onRecord(start: Boolean) = if (start) {
-        startRecording()
-    } else {
-        stopRecording()
-    }
-
-    private fun onPlay(start: Boolean) = if (start) {
-        startPlaying()
-    } else {
-        stopPlaying()
-    }
-
-    private fun startPlaying() {
-        player = MediaPlayer().apply {
-            try {
-                setDataSource(filepath)
-                prepare()
-                start()
-            } catch (e: IOException) {
-                Log.d("startPlaying()", "prepare() failed")
-            }
-        }
-    }
-
-    private fun stopPlaying() {
-        player?.release()
-        player = null
+    private fun onRecord() = when (recordingState) {
+        RecordingState.BEFORE_RECORDING -> startRecording()
+        RecordingState.ON_RECORDING -> pauseRecording()
+        RecordingState.PAUSE -> resumeRecording()
     }
 
     private fun startRecording() {
@@ -133,7 +89,7 @@ class RecordingActivity : AppCompatActivity() {
             File(dir).mkdirs()
         }
 
-        timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         filepath = File(sdCard, "Simple Recorder/${timeStamp}.m4a").absolutePath
 
         recorder = MediaRecorder().apply {
@@ -150,6 +106,17 @@ class RecordingActivity : AppCompatActivity() {
 
             start()
         }
+        recordingState = RecordingState.ON_RECORDING
+    }
+
+    private fun resumeRecording() {
+        recorder?.resume()
+        recordingState = RecordingState.ON_RECORDING
+    }
+
+    private fun pauseRecording() {
+        recorder?.pause()
+        recordingState = RecordingState.PAUSE
     }
 
     private fun stopRecording() {
@@ -157,18 +124,18 @@ class RecordingActivity : AppCompatActivity() {
             stop()
             reset()
             release()
-
-            dataList.add(getAudioData(filepath))
-            binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
         }
+        recordingState = RecordingState.BEFORE_RECORDING
         recorder = null
     }
 
     private fun initListeners() {
         binding.recordButton.setOnClickListener {
             binding.textView2.text = "startRecording"
-            startRecording()
+            binding.recordButton.foreground = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24)
+            //startRecording()
         }
+        /*
         binding.pauseButton.setOnClickListener {
             binding.textView2.text = "pause"
         }
@@ -179,42 +146,23 @@ class RecordingActivity : AppCompatActivity() {
         binding.cancelButton.setOnClickListener {
             binding.textView2.text = "cancel"
         }
+        */
     }
 
     // Checks if a volume containing external storage is available for read and write.
     private fun isExternalStorageWritable() =
         Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
-    // Checks if a volume containing external storage is available to at least read.
-    private fun isExternalStorageReadable() = Environment.getExternalStorageState() in
-            setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.appbar_action, menu)
+        return true
+    }
 
-    private fun getAudioData(path: String): AudioData {
-        val filename = path.split("/").last().split(".").first()
-        val mmr = MediaMetadataRetriever().apply {
-            setDataSource(applicationContext, Uri.parse(path))
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.list -> {
+            startActivity(Intent(this, AudioListActivity::class.java))
+            true
         }
-        val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!! / 1000
-        val date = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)!!
-        val durationStr = buildString {
-            if (duration / 3600 < 10) append("0")
-            append(duration / 3600)
-            append(":")
-            if ((duration % 3600) / 60 < 10) append("0")
-            append((duration % 3600) / 60)
-            append(":")
-            if (duration % 60 < 10) append("0")
-            append(duration % 60)
-        }
-
-        val dateStr = buildString {
-            append(date.slice(0..3))
-            append("-")
-            append(date.slice(4..5))
-            append("-")
-            append(date.slice(6..7))
-        }
-
-        return AudioData(path, filename, durationStr, dateStr)
+        else -> super.onOptionsItemSelected(item)
     }
 }

@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
+        android:backgroundTint="#FFEB3B"
+        android:foregroundTint="#6C2929"
         app:srcCompat="@drawable/baseline_play_circle_filled_24" />
 
     <LinearLayout
