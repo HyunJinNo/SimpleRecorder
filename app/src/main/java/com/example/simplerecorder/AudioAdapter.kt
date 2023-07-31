@@ -1,11 +1,14 @@
 package com.example.simplerecorder
 
+import android.media.MediaPlayer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.io.IOException
 
 class AudioAdapter(private val dataList: MutableList<Array<String>>)
     : RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
@@ -24,9 +27,22 @@ class AudioAdapter(private val dataList: MutableList<Array<String>>)
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
         // Get element from your dataset at this position and
         // replace the contents of the view with that element
-        holder.filename.text = dataList[position][0]
-        holder.duration.text = dataList[position][1]
-        holder.date.text = dataList[position][2]
+        holder.filepath = dataList[position][0]
+        holder.filename.text = dataList[position][1]
+        holder.duration.text = dataList[position][2]
+        holder.date.text = dataList[position][3]
+
+        holder.playButton.setOnClickListener {
+            MediaPlayer().apply {
+                try {
+                    setDataSource(holder.filepath)
+                    prepare()
+                    start()
+                } catch (e: IOException) {
+                    Log.d("playButton", "prepare() failed")
+                }
+            }
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -36,6 +52,7 @@ class AudioAdapter(private val dataList: MutableList<Array<String>>)
     // 아이템 뷰를 저장하는 ViewHolder 클래스
     class AudioViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playButton: ImageButton
+        lateinit var filepath: String
         val filename: TextView
         val duration: TextView
         val date: TextView
@@ -46,13 +63,6 @@ class AudioAdapter(private val dataList: MutableList<Array<String>>)
             filename = view.findViewById(R.id.filenameTextView)
             duration = view.findViewById(R.id.durationTextView)
             date = view.findViewById(R.id.dateTextView)
-
-            playButton.setOnClickListener {
-                val pos = adapterPosition
-                if (pos != RecyclerView.NO_POSITION) {
-
-                }
-            }
         }
     }
 }

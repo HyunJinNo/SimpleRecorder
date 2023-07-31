@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
@@ -59,16 +60,34 @@ class RecordingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = AudioAdapter(dataList)
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = AudioAdapter(dataList)
 
         initListeners()
         requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION)
     }
 
+    override fun onStart() {
+        super.onStart()
+        dataList.clear()
+
+        if (isExternalStorageReadable()) {
+            val dir = Environment.getExternalStorageDirectory().absolutePath + "/Simple Recorder"
+            if (!File(dir).exists()) {
+                File(dir).mkdirs()
+            }
+
+            File(dir).listFiles()?.forEach {
+                val filename = it.absolutePath.split("/").last().split(".").first()
+                dataList.add(arrayOf(it.absolutePath, filename, "??:??:??", "2023-07-31"))
+                binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         recorder = null
+        player = null
     }
 
     private fun onRecord(start: Boolean) = if (start) {
@@ -101,6 +120,11 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun startRecording() {
+        if (!isExternalStorageWritable()) {
+            Toast.makeText(applicationContext, "외부 저장소에 접근하는데 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val sdCard = Environment.getExternalStorageDirectory()
         val dir = sdCard.absolutePath + "/Simple Recorder"
         if (!File(dir).exists()) {
@@ -134,7 +158,7 @@ class RecordingActivity : AppCompatActivity() {
 
             val filename = filepath.split("/").last().split(".").first()
             val date = "${timeStamp.slice(0..3)}-${timeStamp.slice(4..5)}-${timeStamp.slice(6..7)}"
-            dataList.add(arrayOf(filename, "??:??:??", date))
+            dataList.add(arrayOf(filepath, filename, "??:??:??", date))
             binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
         }
         recorder = null
@@ -156,4 +180,10 @@ class RecordingActivity : AppCompatActivity() {
             binding.textView2.text = "cancel"
         }
     }
+
+    // Checks if a volume containing external storage is available for read and write.
+    private fun isExternalStorageWritable() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+
+    // Checks if a volume containing external storage is available to at least read.
+    private fun isExternalStorageReadable() = Environment.getExternalStorageState() in setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
 }
