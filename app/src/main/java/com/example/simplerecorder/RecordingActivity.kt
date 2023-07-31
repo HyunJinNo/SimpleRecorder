@@ -2,11 +2,14 @@ package com.example.simplerecorder
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore.Audio.Media
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,7 +34,7 @@ class RecordingActivity : AppCompatActivity() {
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
-    private val dataList = mutableListOf<Array<String>>()
+    private val dataList = mutableListOf<AudioData>()
 
     companion object {
         private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
@@ -77,8 +80,7 @@ class RecordingActivity : AppCompatActivity() {
             }
 
             File(dir).listFiles()?.forEach {
-                val filename = it.absolutePath.split("/").last().split(".").first()
-                dataList.add(arrayOf(it.absolutePath, filename, "??:??:??", "2023-07-31"))
+                dataList.add(getAudioData(it.absolutePath))
                 binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
             }
         }
@@ -156,9 +158,7 @@ class RecordingActivity : AppCompatActivity() {
             reset()
             release()
 
-            val filename = filepath.split("/").last().split(".").first()
-            val date = "${timeStamp.slice(0..3)}-${timeStamp.slice(4..5)}-${timeStamp.slice(6..7)}"
-            dataList.add(arrayOf(filepath, filename, "??:??:??", date))
+            dataList.add(getAudioData(filepath))
             binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
         }
         recorder = null
@@ -182,8 +182,39 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     // Checks if a volume containing external storage is available for read and write.
-    private fun isExternalStorageWritable() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+    private fun isExternalStorageWritable() =
+        Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
     // Checks if a volume containing external storage is available to at least read.
-    private fun isExternalStorageReadable() = Environment.getExternalStorageState() in setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
+    private fun isExternalStorageReadable() = Environment.getExternalStorageState() in
+            setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
+
+    private fun getAudioData(path: String): AudioData {
+        val filename = path.split("/").last().split(".").first()
+        val mmr = MediaMetadataRetriever().apply {
+            setDataSource(applicationContext, Uri.parse(path))
+        }
+        val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!! / 1000
+        val date = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)!!
+        val durationStr = buildString {
+            if (duration / 3600 < 10) append("0")
+            append(duration / 3600)
+            append(":")
+            if ((duration % 3600) / 60 < 10) append("0")
+            append((duration % 3600) / 60)
+            append(":")
+            if (duration % 60 < 10) append("0")
+            append(duration % 60)
+        }
+
+        val dateStr = buildString {
+            append(date.slice(0..3))
+            append("-")
+            append(date.slice(4..5))
+            append("-")
+            append(date.slice(6..7))
+        }
+
+        return AudioData(path, filename, durationStr, dateStr)
+    }
 }

@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 
-class AudioAdapter(private val dataList: MutableList<Array<String>>)
+class AudioAdapter(private val dataList: MutableList<AudioData>)
     : RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
 
     // Create new views (invoked by the layout manager)
@@ -27,10 +27,10 @@ class AudioAdapter(private val dataList: MutableList<Array<String>>)
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
         // Get element from your dataset at this position and
         // replace the contents of the view with that element
-        holder.filepath = dataList[position][0]
-        holder.filename.text = dataList[position][1]
-        holder.duration.text = dataList[position][2]
-        holder.date.text = dataList[position][3]
+        holder.filepath = dataList[position].filepath
+        holder.filename.text = dataList[position].filename
+        holder.duration.text = dataList[position].duration
+        holder.date.text = dataList[position].date
 
         holder.playButton.setOnClickListener {
             MediaPlayer().apply {
