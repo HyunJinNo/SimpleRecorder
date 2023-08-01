@@ -131,33 +131,28 @@ class RecordingActivity : AppCompatActivity() {
         binding.recordButton.setOnClickListener {
             when (recordingState) {
                 RecordingState.BEFORE_RECORDING -> {
-                    binding.textView2.text = "startRecording"
                     binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
                     binding.stopButton.visibility = View.VISIBLE
                     binding.cancelButton.visibility = View.VISIBLE
                     startRecording()
                 }
                 RecordingState.ON_RECORDING -> {
-                    binding.textView2.text = "pauseRecording"
                     binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
                     pauseRecording()
                 }
                 RecordingState.PAUSE -> {
-                    binding.textView2.text = "resumeRecording"
                     binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
                     resumeRecording()
                 }
             }
         }
         binding.stopButton.setOnClickListener {
-            binding.textView2.text = "stopRecording"
             binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
             binding.stopButton.visibility = View.INVISIBLE
             binding.cancelButton.visibility = View.INVISIBLE
             stopRecording()
         }
         binding.cancelButton.setOnClickListener {
-            binding.textView2.text = "cancelRecording"
             binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
             binding.stopButton.visibility = View.INVISIBLE
             binding.cancelButton.visibility = View.INVISIBLE
