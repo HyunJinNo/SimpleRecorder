@@ -25,11 +25,6 @@ class AudioListActivity : AppCompatActivity() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = AudioAdapter(dataList)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dataList.clear()
 
         if (isExternalStorageReadable()) {
             val dir = Environment.getExternalStorageDirectory().absolutePath + "/Simple Recorder"
