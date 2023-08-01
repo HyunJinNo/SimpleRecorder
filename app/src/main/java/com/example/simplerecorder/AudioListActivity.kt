@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecorder.databinding.ActivityAudioListBinding
 import java.io.File
@@ -17,6 +18,10 @@ class AudioListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAudioListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = AudioAdapter(dataList)
@@ -70,5 +75,13 @@ class AudioListActivity : AppCompatActivity() {
         }
 
         return AudioData(path, filename, durationStr, dateStr)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }
