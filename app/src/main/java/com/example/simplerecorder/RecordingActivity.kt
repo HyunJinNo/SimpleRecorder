@@ -12,8 +12,11 @@ import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isVisible
+import androidx.transition.Visibility
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
 import java.io.IOException
@@ -71,12 +74,6 @@ class RecordingActivity : AppCompatActivity() {
         recorder = null
     }
 
-    private fun onRecord() = when (recordingState) {
-        RecordingState.BEFORE_RECORDING -> startRecording()
-        RecordingState.ON_RECORDING -> pauseRecording()
-        RecordingState.PAUSE -> resumeRecording()
-    }
-
     private fun startRecording() {
         if (!isExternalStorageWritable()) {
             Toast.makeText(applicationContext, "외부 저장소에 접근하는데 실패하였습니다.", Toast.LENGTH_SHORT).show()
@@ -129,24 +126,51 @@ class RecordingActivity : AppCompatActivity() {
         recorder = null
     }
 
+    private fun cancelRecording() {
+        recorder?.apply {
+            stop()
+            reset()
+        }
+        recordingState = RecordingState.BEFORE_RECORDING
+        recorder = null
+    }
+
     private fun initListeners() {
         binding.recordButton.setOnClickListener {
-            binding.textView2.text = "startRecording"
-            binding.recordButton.foreground = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24)
-            //startRecording()
-        }
-        /*
-        binding.pauseButton.setOnClickListener {
-            binding.textView2.text = "pause"
+            when (recordingState) {
+                RecordingState.BEFORE_RECORDING -> {
+                    binding.textView2.text = "startRecording"
+                    binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
+                    binding.stopButton.visibility = View.VISIBLE
+                    binding.cancelButton.visibility = View.VISIBLE
+                    startRecording()
+                }
+                RecordingState.ON_RECORDING -> {
+                    binding.textView2.text = "pauseRecording"
+                    binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
+                    pauseRecording()
+                }
+                RecordingState.PAUSE -> {
+                    binding.textView2.text = "resumeRecording"
+                    binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
+                    resumeRecording()
+                }
+            }
         }
         binding.stopButton.setOnClickListener {
             binding.textView2.text = "stopRecording"
+            binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
+            binding.stopButton.visibility = View.INVISIBLE
+            binding.cancelButton.visibility = View.INVISIBLE
             stopRecording()
         }
         binding.cancelButton.setOnClickListener {
-            binding.textView2.text = "cancel"
+            binding.textView2.text = "cancelRecording"
+            binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
+            binding.stopButton.visibility = View.INVISIBLE
+            binding.cancelButton.visibility = View.INVISIBLE
+            cancelRecording()
         }
-        */
     }
 
     // Checks if a volume containing external storage is available for read and write.
