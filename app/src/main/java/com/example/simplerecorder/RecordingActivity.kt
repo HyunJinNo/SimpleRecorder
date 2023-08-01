@@ -3,8 +3,6 @@ package com.example.simplerecorder
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.media.MediaPlayer
 import android.media.MediaRecorder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,8 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.isVisible
-import androidx.transition.Visibility
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
 import java.io.IOException
@@ -127,12 +123,8 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun cancelRecording() {
-        recorder?.apply {
-            stop()
-            reset()
-        }
-        recordingState = RecordingState.BEFORE_RECORDING
-        recorder = null
+        stopRecording()
+        File(filepath).delete()
     }
 
     private fun initListeners() {
