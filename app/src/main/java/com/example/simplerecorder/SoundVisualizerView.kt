@@ -80,7 +80,7 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet) : View(context,
 
     fun startVisualizing(isReplaying: Boolean) {
         CoroutineScope(Dispatchers.Default).launch {
-            delay(1000L)
+            delay(500L)
             isRePlaying = isReplaying
             handler?.post(visualizeRepeatAction)
         }

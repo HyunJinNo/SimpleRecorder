@@ -62,7 +62,7 @@ class MyService : Service() {
             val channel = NotificationChannel(
                 ANDROID_CHANNEL_ID,
                 "MyService",
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             ).apply {
                 lightColor = Color.BLUE
                 lockscreenVisibility = Notification.VISIBILITY_PRIVATE
