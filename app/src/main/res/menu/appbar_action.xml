@@ -2,7 +2,11 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/list"
+        android:id="@+id/action_list"
         android:title="목록"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_settings"
+        android:title="설정"
+        app:showAsAction="never"/>
 </menu>

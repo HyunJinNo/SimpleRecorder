@@ -182,8 +182,12 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.list -> {
+        R.id.action_list -> {
             startActivity(Intent(this, AudioListActivity::class.java))
+            true
+        }
+        R.id.action_settings -> {
+            // TODO
             true
         }
         else -> super.onOptionsItemSelected(item)
