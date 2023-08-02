@@ -63,6 +63,9 @@ class RecordingActivity : AppCompatActivity() {
 
         initListeners()
         requestPermissions(permissions, REQUEST_PERMISSIONS)
+        binding.soundVisualizerView.onRequestCurrentAmplitude = {
+            recorder?.maxAmplitude ?: 0
+        }
     }
 
     override fun onDestroy() {
@@ -99,25 +102,34 @@ class RecordingActivity : AppCompatActivity() {
 
             start()
         }
+
+        binding.countUpView.startCountUp()
+        binding.soundVisualizerView.startVisualizing(isReplaying = false)
         recordingState = RecordingState.ON_RECORDING
     }
 
     private fun resumeRecording() {
         recorder?.resume()
+        binding.countUpView.resumeCountUp()
+        binding.soundVisualizerView.resumeVisualizing()
         recordingState = RecordingState.ON_RECORDING
     }
 
     private fun pauseRecording() {
         recorder?.pause()
+        binding.countUpView.stopCountUp()
+        binding.soundVisualizerView.stopVisualizing()
         recordingState = RecordingState.PAUSE
     }
 
     private fun stopRecording() {
-        recorder?.apply {
+        recorder?.run {
             stop()
             reset()
             release()
         }
+        binding.countUpView.clearCountTime()
+        binding.soundVisualizerView.clearVisualizing()
         recordingState = RecordingState.BEFORE_RECORDING
         recorder = null
     }
