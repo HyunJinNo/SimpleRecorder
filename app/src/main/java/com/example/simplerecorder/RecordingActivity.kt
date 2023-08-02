@@ -187,7 +187,7 @@ class RecordingActivity : AppCompatActivity() {
             true
         }
         R.id.action_settings -> {
-            // TODO
+            startActivity(Intent(this, SettingsActivity::class.java))
             true
         }
         else -> super.onOptionsItemSelected(item)
