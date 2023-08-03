@@ -1,6 +1,7 @@
 package com.example.simplerecorder
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
@@ -12,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
@@ -103,12 +105,16 @@ class RecordingActivity : AppCompatActivity() {
             start()
         }
 
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
+        binding.stopButton.visibility = View.VISIBLE
+        binding.cancelButton.visibility = View.VISIBLE
         binding.countUpView.startCountUp()
         binding.soundVisualizerView.startVisualizing(isReplaying = false)
         recordingState = RecordingState.ON_RECORDING
     }
 
     private fun resumeRecording() {
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
         recorder?.resume()
         binding.countUpView.resumeCountUp()
         binding.soundVisualizerView.resumeVisualizing()
@@ -116,6 +122,7 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun pauseRecording() {
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
         recorder?.pause()
         binding.countUpView.stopCountUp()
         binding.soundVisualizerView.stopVisualizing()
@@ -123,6 +130,10 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun stopRecording() {
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
+        binding.stopButton.visibility = View.INVISIBLE
+        binding.cancelButton.visibility = View.INVISIBLE
+
         recorder?.run {
             stop()
             reset()
@@ -132,43 +143,56 @@ class RecordingActivity : AppCompatActivity() {
         binding.soundVisualizerView.clearVisualizing()
         recordingState = RecordingState.BEFORE_RECORDING
         recorder = null
+        Toast.makeText(applicationContext, "녹음 파일이 저장되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun cancelRecording() {
         stopRecording()
         File(filepath).delete()
+        Toast.makeText(applicationContext, "녹음이 취소되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun initListeners() {
         binding.recordButton.setOnClickListener {
             when (recordingState) {
                 RecordingState.BEFORE_RECORDING -> {
-                    binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
-                    binding.stopButton.visibility = View.VISIBLE
-                    binding.cancelButton.visibility = View.VISIBLE
                     startRecording()
                 }
                 RecordingState.ON_RECORDING -> {
-                    binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
                     pauseRecording()
                 }
                 RecordingState.PAUSE -> {
-                    binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
                     resumeRecording()
                 }
             }
         }
         binding.stopButton.setOnClickListener {
-            binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
-            binding.stopButton.visibility = View.INVISIBLE
-            binding.cancelButton.visibility = View.INVISIBLE
-            stopRecording()
+            pauseRecording()
+            with (AlertDialog.Builder(this)) {
+                setTitle("녹음 파일을 저장하시겠습니까?")
+                setPositiveButton("저장") { dialog, id ->
+                    stopRecording()
+                }
+                setNegativeButton("취소") { dialog, id ->
+                    // Do nothing
+                }
+                create()
+                show()
+            }
         }
         binding.cancelButton.setOnClickListener {
-            binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
-            binding.stopButton.visibility = View.INVISIBLE
-            binding.cancelButton.visibility = View.INVISIBLE
-            cancelRecording()
+            pauseRecording()
+            with (AlertDialog.Builder(this)) {
+                setTitle("녹음을 취소하시겠습니까?")
+                setPositiveButton("네") { dialog, id ->
+                    cancelRecording()
+                }
+                setNegativeButton("아니오") { dialog, id ->
+                    // Do nothing.
+                }
+                create()
+                show()
+            }
         }
     }
 
