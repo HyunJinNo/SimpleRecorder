@@ -3,6 +3,7 @@ package com.example.simplerecorder
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -73,7 +74,44 @@ class MyService : Service() {
             manager.createNotificationChannel(channel)
 
             // Get the layouts to use in the custom notification
-            val notificationLayout = RemoteViews(packageName, R.layout.custom_notification)
+            val notificationLayout = RemoteViews(packageName, R.layout.custom_notification).apply {
+                setOnClickPendingIntent(
+                    R.id.stopButton,
+                    PendingIntent.getBroadcast(
+                        applicationContext,
+                        1000,
+                        Intent(applicationContext, MyReceiver::class.java)
+                            .apply {
+                                action = MyReceiver.ACTION_STOP
+                            },
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
+                setOnClickPendingIntent(
+                    R.id.recordButton,
+                    PendingIntent.getBroadcast(
+                        applicationContext,
+                        1000,
+                        Intent(applicationContext, MyReceiver::class.java)
+                            .apply {
+                                action = MyReceiver.ACTION_RECORD
+                            },
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
+                setOnClickPendingIntent(
+                    R.id.cancelButton,
+                    PendingIntent.getBroadcast(
+                        applicationContext,
+                        1000,
+                        Intent(applicationContext, MyReceiver::class.java)
+                            .apply {
+                                action = MyReceiver.ACTION_CANCEL
+                            },
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
+            }
 
             // Notification 알림 객체 생성
             val builder = NotificationCompat.Builder(this, ANDROID_CHANNEL_ID)
