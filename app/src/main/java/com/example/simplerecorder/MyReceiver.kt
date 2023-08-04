@@ -25,6 +25,7 @@ class MyReceiver : BroadcastReceiver() {
             }
             ACTION_RECORD -> {
                 Toast.makeText(context, "녹음 시작", Toast.LENGTH_SHORT).show()
+                AudioRecorder.startRecording()
             }
             ACTION_PAUSE -> {
                 Toast.makeText(context, "녹음 일시 정지", Toast.LENGTH_SHORT).show()
@@ -34,13 +35,16 @@ class MyReceiver : BroadcastReceiver() {
             }
             ACTION_STOP -> {
                 Toast.makeText(context, "녹음 종료", Toast.LENGTH_SHORT).show()
+                AudioRecorder.stopRecording()
             }
             ACTION_CANCEL -> {
                 Toast.makeText(context, "녹음 취소", Toast.LENGTH_SHORT).show()
+                AudioRecorder.cancelRecording()
             }
             else -> {
 
             }
         }
     }
+
 }
