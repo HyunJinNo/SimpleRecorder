@@ -12,6 +12,10 @@ import com.example.simplerecorder.R
 class MyService : Service() {
     private var myReceiver: MyReceiver? = null
 
+    companion object {
+        private const val NOTIFICATION_ID = 9999
+    }
+
     // 서비스가 최소 생성될 때 callback 함수
     override fun onCreate() {
         super.onCreate()
@@ -46,7 +50,8 @@ class MyService : Service() {
             }
         }
 
-        NotificationGenerator.generateNotification(applicationContext, R.layout.custom_notification)
+        val notification = NotificationGenerator.generateNotification(applicationContext, R.layout.custom_notification)
+        startForeground(NOTIFICATION_ID, notification)
 
         return START_REDELIVER_INTENT
     }

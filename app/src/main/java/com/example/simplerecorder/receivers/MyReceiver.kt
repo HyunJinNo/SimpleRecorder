@@ -29,7 +29,7 @@ class MyReceiver : BroadcastReceiver() {
                 when (AudioRecorder.recordingState) {
                     RecordingState.BEFORE_RECORDING -> {
                         Toast.makeText(context, "녹음 시작", Toast.LENGTH_SHORT).show()
-                        NotificationGenerator.generateNotification(
+                        NotificationGenerator.notifyNotification(
                             context,
                             R.layout.custom_notification_recording
                         )
@@ -37,7 +37,7 @@ class MyReceiver : BroadcastReceiver() {
                     }
                     RecordingState.ON_RECORDING -> {
                         Toast.makeText(context, "녹음 일시 정지", Toast.LENGTH_SHORT).show()
-                        NotificationGenerator.generateNotification(
+                        NotificationGenerator.notifyNotification(
                             context,
                             R.layout.custom_notification_pause
                         )
@@ -45,7 +45,7 @@ class MyReceiver : BroadcastReceiver() {
                     }
                     RecordingState.PAUSE -> {
                         Toast.makeText(context, "녹음 재개", Toast.LENGTH_SHORT).show()
-                        NotificationGenerator.generateNotification(
+                        NotificationGenerator.notifyNotification(
                             context,
                             R.layout.custom_notification_recording
                         )
@@ -55,12 +55,12 @@ class MyReceiver : BroadcastReceiver() {
             }
             ACTION_STOP -> {
                 Toast.makeText(context, "녹음 종료", Toast.LENGTH_SHORT).show()
-                NotificationGenerator.generateNotification(context, R.layout.custom_notification)
+                NotificationGenerator.notifyNotification(context, R.layout.custom_notification)
                 AudioRecorder.stopRecording()
             }
             ACTION_CANCEL -> {
                 Toast.makeText(context, "녹음 취소", Toast.LENGTH_SHORT).show()
-                NotificationGenerator.generateNotification(context, R.layout.custom_notification)
+                NotificationGenerator.notifyNotification(context, R.layout.custom_notification)
                 AudioRecorder.cancelRecording()
             }
             else -> {
