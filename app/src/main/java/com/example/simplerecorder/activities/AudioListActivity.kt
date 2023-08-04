@@ -1,4 +1,4 @@
-package com.example.simplerecorder
+package com.example.simplerecorder.activities
 
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.simplerecorder.utils.AudioAdapter
+import com.example.simplerecorder.utils.AudioData
 import com.example.simplerecorder.databinding.ActivityAudioListBinding
 import java.io.File
 

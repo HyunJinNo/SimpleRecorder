@@ -1,4 +1,4 @@
-package com.example.simplerecorder
+package com.example.simplerecorder.activities
 
 import android.Manifest
 import android.content.Intent
@@ -11,6 +11,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
+import com.example.simplerecorder.utils.AudioRecorder
+import com.example.simplerecorder.R
+import com.example.simplerecorder.utils.RecordingState
 import com.example.simplerecorder.databinding.ActivityRecordingBinding
 import java.io.File
 
@@ -66,7 +69,9 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun startRecording() {
-        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
+            R.drawable.baseline_pause_24
+        ))
         binding.stopButton.visibility = View.VISIBLE
         binding.cancelButton.visibility = View.VISIBLE
         binding.countUpView.startCountUp()
@@ -75,21 +80,27 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun resumeRecording() {
-        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_pause_24))
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
+            R.drawable.baseline_pause_24
+        ))
         binding.countUpView.resumeCountUp()
         binding.soundVisualizerView.resumeVisualizing()
         AudioRecorder.resumeRecording()
     }
 
     private fun pauseRecording() {
-        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
+            R.drawable.baseline_fiber_manual_record_24
+        ))
         binding.countUpView.stopCountUp()
         binding.soundVisualizerView.stopVisualizing()
         AudioRecorder.pauseRecording()
     }
 
     private fun stopRecording() {
-        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_fiber_manual_record_24))
+        binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
+            R.drawable.baseline_fiber_manual_record_24
+        ))
         binding.stopButton.visibility = View.INVISIBLE
         binding.cancelButton.visibility = View.INVISIBLE
         binding.countUpView.clearCountTime()

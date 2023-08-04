@@ -1,4 +1,4 @@
-package com.example.simplerecorder
+package com.example.simplerecorder.utils
 
 import android.media.MediaRecorder
 import android.os.Environment

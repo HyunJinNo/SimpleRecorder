@@ -1,4 +1,4 @@
-package com.example.simplerecorder
+package com.example.simplerecorder.utils
 
 data class AudioData(
     val filepath: String,

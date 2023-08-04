@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -18,13 +19,13 @@
         android:theme="@style/Theme.SimpleRecorder"
         tools:targetApi="31">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".AudioListActivity"
+            android:name=".activities.AudioListActivity"
             android:exported="false" />
         <activity
-            android:name=".RecordingActivity"
+            android:name=".activities.RecordingActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,12 +35,12 @@
         </activity>
 
         <service
-            android:name=".MyService"
+            android:name=".services.MyService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name=".MyReceiver"
+            android:name=".receivers.MyReceiver"
             android:enabled="true"
             android:exported="true" />
     </application>

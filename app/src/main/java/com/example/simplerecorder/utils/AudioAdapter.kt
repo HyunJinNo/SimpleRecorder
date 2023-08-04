@@ -1,4 +1,4 @@
-package com.example.simplerecorder
+package com.example.simplerecorder.utils
 
 import android.media.MediaPlayer
 import android.util.Log
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.simplerecorder.R
 import java.io.IOException
 
 class AudioAdapter(private val dataList: MutableList<AudioData>)

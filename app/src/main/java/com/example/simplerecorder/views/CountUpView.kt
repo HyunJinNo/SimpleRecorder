@@ -1,4 +1,4 @@
-package com.example.simplerecorder
+package com.example.simplerecorder.views
 
 import android.content.Context
 import android.util.AttributeSet

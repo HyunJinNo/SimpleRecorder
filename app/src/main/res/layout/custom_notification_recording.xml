@@ -15,11 +15,26 @@
         android:text="00:00" />
 
     <Button
+        android:id="@+id/stopButton"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/round_button"
+        android:foreground="@drawable/baseline_stop_24" />
+
+    <Button
         android:id="@+id/recordButton"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:layout_marginEnd="42dp"
         android:background="@drawable/round_button"
-        android:foreground="@drawable/baseline_fiber_manual_record_24" />
+        android:foreground="@drawable/baseline_pause_24" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/round_button"
+        android:foreground="@drawable/baseline_close_24" />
 
 </LinearLayout>

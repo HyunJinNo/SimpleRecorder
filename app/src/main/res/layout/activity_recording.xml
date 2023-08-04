@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecordingActivity">
+    tools:context=".activities.RecordingActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -65,7 +65,7 @@
 
     <view
         android:id="@+id/soundVisualizerView"
-        class="com.example.simplerecorder.SoundVisualizerView"
+        class="com.example.simplerecorder.views.SoundVisualizerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -79,7 +79,7 @@
 
     <view
         android:id="@+id/countUpView"
-        class="com.example.simplerecorder.CountUpView"
+        class="com.example.simplerecorder.views.CountUpView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
