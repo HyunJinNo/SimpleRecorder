@@ -65,6 +65,9 @@ class RecordingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (AudioRecorder.recorder != null) {
+            cancelRecording()
+        }
         AudioRecorder.recorder = null
     }
 
