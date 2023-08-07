@@ -169,11 +169,103 @@ class RecordingActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_list -> {
-            startActivity(Intent(this, AudioListActivity::class.java))
+            if (AudioRecorder.recorder != null) {
+                when (AudioRecorder.recordingState) {
+                    RecordingState.ON_RECORDING -> {
+                        pauseRecording()
+                        with (AlertDialog.Builder(this)) {
+                            setTitle("녹음 파일을 저장하시겠습니까?")
+                            setPositiveButton("저장") { _, _ ->
+                                stopRecording()
+                                startActivity(Intent(this@RecordingActivity, AudioListActivity::class.java))
+                            }
+                            setNegativeButton("저장 안함") { _, _ ->
+                                cancelRecording()
+                                startActivity(Intent(this@RecordingActivity, AudioListActivity::class.java))
+                            }
+                            setNeutralButton("취소") { _, _ ->
+                                // Do nothing.
+                            }
+                            create()
+                            show()
+                        }
+                    }
+                    RecordingState.PAUSE -> {
+                        with (AlertDialog.Builder(this)) {
+                            setTitle("녹음 파일을 저장하시겠습니까?")
+                            setPositiveButton("저장") { _, _ ->
+                                stopRecording()
+                                startActivity(Intent(this@RecordingActivity, AudioListActivity::class.java))
+                            }
+                            setNegativeButton("저장 안함") { _, _ ->
+                                cancelRecording()
+                                startActivity(Intent(this@RecordingActivity, AudioListActivity::class.java))
+                            }
+                            setNeutralButton("취소") { _, _ ->
+                                // Do nothing.
+                            }
+                            create()
+                            show()
+                        }
+                    }
+                    else -> {
+                        startActivity(Intent(this, AudioListActivity::class.java))
+                    }
+                }
+            } else {
+                startActivity(Intent(this, AudioListActivity::class.java))
+            }
+
             true
         }
         R.id.action_settings -> {
-            startActivity(Intent(this, SettingsActivity::class.java))
+            if (AudioRecorder.recorder != null) {
+                when (AudioRecorder.recordingState) {
+                    RecordingState.ON_RECORDING -> {
+                        pauseRecording()
+                        with (AlertDialog.Builder(this)) {
+                            setTitle("녹음 파일을 저장하시겠습니까?")
+                            setPositiveButton("저장") { _, _ ->
+                                stopRecording()
+                                startActivity(Intent(this@RecordingActivity, SettingsActivity::class.java))
+                            }
+                            setNegativeButton("저장 안함") { _, _ ->
+                                cancelRecording()
+                                startActivity(Intent(this@RecordingActivity, SettingsActivity::class.java))
+                            }
+                            setNeutralButton("취소") { _, _ ->
+                                // Do nothing.
+                            }
+                            create()
+                            show()
+                        }
+                    }
+                    RecordingState.PAUSE -> {
+                        with (AlertDialog.Builder(this)) {
+                            setTitle("녹음 파일을 저장하시겠습니까?")
+                            setPositiveButton("저장") { _, _ ->
+                                stopRecording()
+                                startActivity(Intent(this@RecordingActivity, SettingsActivity::class.java))
+                            }
+                            setNegativeButton("저장 안함") { _, _ ->
+                                cancelRecording()
+                                startActivity(Intent(this@RecordingActivity, SettingsActivity::class.java))
+                            }
+                            setNeutralButton("취소") { _, _ ->
+                                // Do nothing.
+                            }
+                            create()
+                            show()
+                        }
+                    }
+                    else -> {
+                        startActivity(Intent(this, SettingsActivity::class.java))
+                    }
+                }
+            } else {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+
             true
         }
         else -> super.onOptionsItemSelected(item)
