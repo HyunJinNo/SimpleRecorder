@@ -175,4 +175,54 @@ class RecordingActivity : AppCompatActivity() {
         }
         else -> super.onOptionsItemSelected(item)
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (AudioRecorder.recorder != null) {
+            when (AudioRecorder.recordingState) {
+                RecordingState.ON_RECORDING -> {
+                    pauseRecording()
+                    with (AlertDialog.Builder(this)) {
+                        setTitle("녹음 파일을 저장하시겠습니까?")
+                        setPositiveButton("저장") { _, _ ->
+                            stopRecording()
+                            finish()
+                        }
+                        setNegativeButton("저장 안함") { _, _ ->
+                            cancelRecording()
+                            finish()
+                        }
+                        setNeutralButton("취소") { _, _ ->
+                            // Do nothing.
+                        }
+                        create()
+                        show()
+                    }
+                }
+                RecordingState.PAUSE -> {
+                    with (AlertDialog.Builder(this)) {
+                        setTitle("녹음 파일을 저장하시겠습니까?")
+                        setPositiveButton("저장") { _, _ ->
+                            stopRecording()
+                            finish()
+                        }
+                        setNegativeButton("저장 안함") { _, _ ->
+                            cancelRecording()
+                            finish()
+                        }
+                        setNeutralButton("취소") { _, _ ->
+                            // Do nothing.
+                        }
+                        create()
+                        show()
+                    }
+                }
+                else -> {
+                    finish()
+                }
+            }
+        } else {
+            finish()
+        }
+    }
 }
