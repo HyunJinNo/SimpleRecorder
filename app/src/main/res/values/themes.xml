@@ -3,6 +3,10 @@
     <style name="Base.Theme.SimpleRecorder" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">#03A9F4</item>
+        <item name="colorPrimaryDark">#03A9F4</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="Theme.SimpleRecorder" parent="Base.Theme.SimpleRecorder" />

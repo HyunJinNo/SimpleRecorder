@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">SimpleRecorder</string>
+    <string name="app_name">Simple\nRecorder</string>
+    <!-- Preference Titles -->
+    <string name="settings_header">설정</string>
+
+    <!-- Settings Preferences -->
+    <string name="sound_quality_title">녹음 음질</string>
+    <string name="foreground_title">포어그라운드 설정</string>
 </resources>
