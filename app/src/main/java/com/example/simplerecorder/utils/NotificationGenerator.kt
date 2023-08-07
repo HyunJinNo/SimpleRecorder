@@ -38,6 +38,7 @@ object NotificationGenerator {
 
         // Get the layouts to use in the custom notification
         val notificationLayout = RemoteViews(context.packageName, layout).apply {
+            setTextViewText(R.id.timeTextView, AudioTimer.getTimeStamp())
             setOnClickPendingIntent(
                 R.id.stopButton,
                 PendingIntent.getBroadcast(
