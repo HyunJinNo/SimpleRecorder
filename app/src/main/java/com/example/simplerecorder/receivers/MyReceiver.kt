@@ -37,7 +37,6 @@ class MyReceiver : BroadcastReceiver() {
                                     context,
                                     R.layout.custom_notification_recording
                                 )
-                                AudioTimer.duration++
                             }
                         })
                         AudioRecorder.startRecording()
@@ -59,7 +58,6 @@ class MyReceiver : BroadcastReceiver() {
                                     context,
                                     R.layout.custom_notification_recording
                                 )
-                                AudioTimer.duration++
                             }
                         })
                         AudioRecorder.resumeRecording()
