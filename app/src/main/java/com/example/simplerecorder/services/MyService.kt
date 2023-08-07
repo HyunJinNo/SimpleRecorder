@@ -50,7 +50,7 @@ class MyService : Service() {
             }
         }
 
-        val notification = NotificationGenerator.generateNotification(applicationContext, R.layout.custom_notification)
+        val notification = NotificationGenerator.generateNotification(this, R.layout.custom_notification)
         startForeground(NOTIFICATION_ID, notification)
 
         return START_REDELIVER_INTENT

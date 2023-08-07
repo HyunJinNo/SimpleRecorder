@@ -31,7 +31,7 @@
         app:layout_constraintEnd_toStartOf="@+id/cancelButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/stopButton"
-        app:srcCompat="@drawable/baseline_fiber_manual_record_24" />
+        app:srcCompat="@drawable/baseline_fiber_manual_record_40" />
 
     <ImageButton
         android:id="@+id/stopButton"

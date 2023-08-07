@@ -73,7 +73,7 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun startRecording() {
         binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
-            R.drawable.baseline_pause_24
+            R.drawable.baseline_pause_40
         ))
         binding.stopButton.visibility = View.VISIBLE
         binding.cancelButton.visibility = View.VISIBLE
@@ -84,7 +84,7 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun resumeRecording() {
         binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
-            R.drawable.baseline_pause_24
+            R.drawable.baseline_pause_40
         ))
         binding.countUpView.resumeCountUp()
         binding.soundVisualizerView.resumeVisualizing()
@@ -93,7 +93,7 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun pauseRecording() {
         binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
-            R.drawable.baseline_fiber_manual_record_24
+            R.drawable.baseline_fiber_manual_record_40
         ))
         binding.countUpView.stopCountUp()
         binding.soundVisualizerView.stopVisualizing()
@@ -102,7 +102,7 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun stopRecording() {
         binding.recordButton.setImageDrawable(AppCompatResources.getDrawable(applicationContext,
-            R.drawable.baseline_fiber_manual_record_24
+            R.drawable.baseline_fiber_manual_record_40
         ))
         binding.stopButton.visibility = View.INVISIBLE
         binding.cancelButton.visibility = View.INVISIBLE

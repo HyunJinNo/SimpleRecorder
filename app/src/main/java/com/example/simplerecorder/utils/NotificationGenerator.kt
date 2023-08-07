@@ -24,7 +24,7 @@ object NotificationGenerator {
             val channel = NotificationChannel(
                 ANDROID_CHANNEL_ID,
                 "MyService",
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             ).apply {
                 lightColor = Color.BLUE
                 lockscreenVisibility = Notification.VISIBILITY_PRIVATE
@@ -80,7 +80,7 @@ object NotificationGenerator {
         return NotificationCompat.Builder(context, ANDROID_CHANNEL_ID)
             //.setContentTitle(getString(R.string.app_name))
             //.setContentText("SmartTracker Running")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.baseline_mic_24)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(notificationLayout)
             .build()
