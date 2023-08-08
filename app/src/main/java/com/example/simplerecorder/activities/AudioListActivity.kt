@@ -2,14 +2,16 @@ package com.example.simplerecorder.activities
 
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.simplerecorder.R
+import com.example.simplerecorder.databinding.ActivityAudioListBinding
 import com.example.simplerecorder.utils.AudioAdapter
 import com.example.simplerecorder.utils.AudioData
-import com.example.simplerecorder.databinding.ActivityAudioListBinding
+import com.example.simplerecorder.utils.AudioPlayer
 import java.io.File
 
 class AudioListActivity : AppCompatActivity() {
@@ -38,7 +40,46 @@ class AudioListActivity : AppCompatActivity() {
                 dataList.add(getAudioData(it.absolutePath))
                 binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
             }
+
+            AudioPlayer.ready(File(dir).listFiles()?.get(0)!!.absolutePath)
+            AudioPlayer.mediaPlayer?.setOnPreparedListener {
+                // TODO
+            }
         }
+
+        binding.customMediaController.backwardButton.setOnClickListener {
+            // TODO
+        }
+
+        binding.customMediaController.playButton.setOnClickListener {
+            // TODO
+            binding.customMediaController.playButton.setImageResource(R.drawable.baseline_pause_40)
+        }
+
+        binding.customMediaController.forwardButton.setOnClickListener {
+            // TODO
+        }
+
+        // TODO
+        binding.customMediaController.timeStamp1.text = "00:00"
+
+        // TODO
+        binding.customMediaController.timeStamp2.text = "??:??"
+    }
+
+    override fun onStop() {
+        super.onStop()
+        AudioPlayer.mediaPlayer?.run {
+            stop()
+            reset()
+            release()
+        }
+        AudioPlayer.mediaPlayer = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AudioPlayer.mediaPlayer = null
     }
 
     // Checks if a volume containing external storage is available to at least read.
@@ -78,7 +119,6 @@ class AudioListActivity : AppCompatActivity() {
         if (item.itemId == android.R.id.home) {
             finish()
         }
-
         return super.onOptionsItemSelected(item)
     }
 }
