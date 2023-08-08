@@ -7,7 +7,8 @@ import java.io.IOException
 
 object AudioPlayer : MediaController.MediaPlayerControl {
     var mediaPlayer: MediaPlayer? = null
-    private var filepath: String = ""
+    var filepath: String = ""
+    var listener: MediaPlayer.OnPreparedListener? = null
 
     fun ready(path: String) {
         filepath = path
@@ -19,6 +20,8 @@ object AudioPlayer : MediaController.MediaPlayerControl {
                 Log.d("AudioPlayer", "prepare() failed")
             }
         }
+
+        mediaPlayer?.setOnPreparedListener(listener)
     }
 
     override fun start() {

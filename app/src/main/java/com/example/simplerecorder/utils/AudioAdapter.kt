@@ -1,7 +1,5 @@
 package com.example.simplerecorder.utils
 
-import android.media.MediaPlayer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +7,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplerecorder.R
-import java.io.IOException
 
 class AudioAdapter(private val dataList: MutableList<AudioData>)
     : RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
@@ -34,15 +31,7 @@ class AudioAdapter(private val dataList: MutableList<AudioData>)
         holder.date.text = dataList[position].date
 
         holder.playButton.setOnClickListener {
-            MediaPlayer().apply {
-                try {
-                    setDataSource(holder.filepath)
-                    prepare()
-                    start()
-                } catch (e: IOException) {
-                    Log.d("playButton", "prepare() failed")
-                }
-            }
+            AudioPlayer.ready(holder.filepath)
         }
     }
 

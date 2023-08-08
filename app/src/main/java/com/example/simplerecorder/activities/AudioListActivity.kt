@@ -1,6 +1,7 @@
 package com.example.simplerecorder.activities
 
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -41,10 +42,26 @@ class AudioListActivity : AppCompatActivity() {
                 binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
             }
 
-            AudioPlayer.ready(File(dir).listFiles()?.get(0)!!.absolutePath)
-            AudioPlayer.mediaPlayer?.setOnPreparedListener {
-                // TODO
+            AudioPlayer.listener = MediaPlayer.OnPreparedListener {
+                val mmr = MediaMetadataRetriever().apply {
+                    setDataSource(applicationContext, Uri.parse(AudioPlayer.filepath))
+                }
+                val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!! / 1000
+                val durationStr = buildString {
+                    if (duration / 3600 < 10) append("0")
+                    append(duration / 3600)
+                    append(":")
+                    if ((duration % 3600) / 60 < 10) append("0")
+                    append((duration % 3600) / 60)
+                    append(":")
+                    if (duration % 60 < 10) append("0")
+                    append(duration % 60)
+                }
+
+                binding.customMediaController.timeStamp1.text = "00:00:00"
+                binding.customMediaController.timeStamp2.text = durationStr
             }
+            AudioPlayer.ready(File(dir).listFiles()?.get(0)!!.absolutePath)
         }
 
         binding.customMediaController.backwardButton.setOnClickListener {
@@ -59,12 +76,6 @@ class AudioListActivity : AppCompatActivity() {
         binding.customMediaController.forwardButton.setOnClickListener {
             // TODO
         }
-
-        // TODO
-        binding.customMediaController.timeStamp1.text = "00:00"
-
-        // TODO
-        binding.customMediaController.timeStamp2.text = "??:??"
     }
 
     override fun onStop() {
