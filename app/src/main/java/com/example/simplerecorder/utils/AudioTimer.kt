@@ -34,13 +34,14 @@ object AudioTimer {
 
     fun getTimeStamp(): String {
         if (startTimeStamp == 0L) {
-            return "00:00"
+            return "00:00:00"
         }
 
         val currentTimeStamp = System.currentTimeMillis()
         val countTimeSeconds = ((currentTimeStamp - startTimeStamp) / 1000L).toInt()
-        val minute = countTimeSeconds / 60
+        val hour = countTimeSeconds / 3600
+        val minute = (countTimeSeconds % 3600) / 60
         val second = countTimeSeconds % 60
-        return "%02d:%02d".format(minute, second)
+        return "%02d:%02d:%02d".format(hour, minute, second)
     }
 }

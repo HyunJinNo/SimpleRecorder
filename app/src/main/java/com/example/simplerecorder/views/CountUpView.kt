@@ -37,8 +37,9 @@ class CountUpView(context: Context, attrs: AttributeSet) : AppCompatTextView(con
     }
 
     private fun updateCountTime(countTimeSeconds: Int) {
-        val minute = countTimeSeconds / 60
+        val hour = countTimeSeconds / 3600
+        val minute = (countTimeSeconds % 3600) / 60
         val second = countTimeSeconds % 60
-        text = "%02d:%02d".format(minute, second)
+        text = "%02d:%02d:%02d".format(hour, minute, second)
     }
 }

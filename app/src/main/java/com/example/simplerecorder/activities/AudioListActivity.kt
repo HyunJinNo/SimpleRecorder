@@ -165,6 +165,14 @@ class AudioListActivity : AppCompatActivity() {
         return AudioData(path, filename, durationStr, dateStr)
     }
 
+    private fun getTimeStamp(countTimeSeconds: Int): String {
+        val hour = countTimeSeconds / 3600
+        val minute = (countTimeSeconds % 3600) / 60
+        val second = countTimeSeconds % 60
+        return "%02d:%02d:%02d".format(hour, minute, second)
+    }
+
+    /*
     private fun getTimeStamp(duration: Int) = buildString {
         if (duration / 3600 < 10) append("0")
         append(duration / 3600)
@@ -175,6 +183,7 @@ class AudioListActivity : AppCompatActivity() {
         if (duration % 60 < 10) append("0")
         append(duration % 60)
     }
+    */
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
