@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.preference.PreferenceManager
 import com.example.simplerecorder.utils.AudioRecorder
 import com.example.simplerecorder.R
 import com.example.simplerecorder.utils.RecordingState
@@ -120,15 +121,20 @@ class RecordingActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.recordButton.setOnClickListener {
-            when (AudioRecorder.recordingState) {
-                RecordingState.BEFORE_RECORDING -> {
-                    startRecording()
-                }
-                RecordingState.ON_RECORDING -> {
-                    pauseRecording()
-                }
-                RecordingState.PAUSE -> {
-                    resumeRecording()
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            if (prefs.getBoolean("foregroundSetting", false)) {
+                Toast.makeText(applicationContext, "포어그라운드 서비스가 동작 중입니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                when (AudioRecorder.recordingState) {
+                    RecordingState.BEFORE_RECORDING -> {
+                        startRecording()
+                    }
+                    RecordingState.ON_RECORDING -> {
+                        pauseRecording()
+                    }
+                    RecordingState.PAUSE -> {
+                        resumeRecording()
+                    }
                 }
             }
         }
