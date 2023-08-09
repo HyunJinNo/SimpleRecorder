@@ -3,12 +3,14 @@
 
     <PreferenceCategory android:title="@string/settings_header">
 
+        <!--
         <ListPreference
             android:defaultValue="reply"
             android:entries="@array/reply_entries"
             android:entryValues="@array/reply_values"
             android:key="soundQuality"
             android:title="@string/sound_quality_title" />
+            -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="foregroundSetting"
