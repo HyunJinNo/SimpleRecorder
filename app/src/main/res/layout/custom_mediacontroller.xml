@@ -66,17 +66,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/forwardButton" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <SeekBar
+        android:id="@+id/seekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:max="100"
+        android:progress="0"
         android:progressBackgroundTint="@color/white"
         android:progressTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:thumbTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/timeStamp2"
         app:layout_constraintEnd_toStartOf="@+id/timeStamp2"
         app:layout_constraintStart_toEndOf="@+id/timeStamp1"
-        app:layout_constraintTop_toBottomOf="@+id/playButton" />
+        app:layout_constraintTop_toTopOf="@+id/timeStamp2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecorder.R
@@ -43,39 +44,51 @@ class AudioListActivity : AppCompatActivity() {
             }
 
             AudioPlayer.listener = MediaPlayer.OnPreparedListener {
+                binding.customMediaController.playButton.setImageResource(R.drawable.baseline_play_arrow_24)
+
                 val mmr = MediaMetadataRetriever().apply {
                     setDataSource(applicationContext, Uri.parse(AudioPlayer.filepath))
                 }
                 val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!! / 1000
-                val durationStr = buildString {
-                    if (duration / 3600 < 10) append("0")
-                    append(duration / 3600)
-                    append(":")
-                    if ((duration % 3600) / 60 < 10) append("0")
-                    append((duration % 3600) / 60)
-                    append(":")
-                    if (duration % 60 < 10) append("0")
-                    append(duration % 60)
-                }
 
                 binding.customMediaController.timeStamp1.text = "00:00:00"
-                binding.customMediaController.timeStamp2.text = durationStr
+                binding.customMediaController.timeStamp2.text = getTimeStamp(duration)
+
+                binding.customMediaController.seekBar.max = duration
+                binding.customMediaController.seekBar.progress = 0
             }
             AudioPlayer.ready(File(dir).listFiles()?.get(0)!!.absolutePath)
         }
 
         binding.customMediaController.backwardButton.setOnClickListener {
-            // TODO
+            val progress = binding.customMediaController.seekBar.progress
+            binding.customMediaController.seekBar.progress = if (progress <= 5) 0 else (progress - 5)
         }
 
         binding.customMediaController.playButton.setOnClickListener {
-            // TODO
             binding.customMediaController.playButton.setImageResource(R.drawable.baseline_pause_40)
+            AudioPlayer.start()
         }
 
         binding.customMediaController.forwardButton.setOnClickListener {
-            // TODO
+            val progress = binding.customMediaController.seekBar.progress
+            val max = binding.customMediaController.seekBar.max
+            binding.customMediaController.seekBar.progress = if (progress + 5 >= max) max else (progress + 5)
         }
+
+        binding.customMediaController.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                binding.customMediaController.timeStamp1.text = getTimeStamp(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                binding.customMediaController.timeStamp1.text = getTimeStamp(seekBar.progress)
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                binding.customMediaController.timeStamp1.text = getTimeStamp(seekBar.progress)
+            }
+        })
     }
 
     override fun onStop() {
@@ -103,18 +116,8 @@ class AudioListActivity : AppCompatActivity() {
             setDataSource(applicationContext, Uri.parse(path))
         }
         val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!! / 1000
+        val durationStr = getTimeStamp(duration)
         val date = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)!!
-        val durationStr = buildString {
-            if (duration / 3600 < 10) append("0")
-            append(duration / 3600)
-            append(":")
-            if ((duration % 3600) / 60 < 10) append("0")
-            append((duration % 3600) / 60)
-            append(":")
-            if (duration % 60 < 10) append("0")
-            append(duration % 60)
-        }
-
         val dateStr = buildString {
             append(date.slice(0..3))
             append("-")
@@ -124,6 +127,17 @@ class AudioListActivity : AppCompatActivity() {
         }
 
         return AudioData(path, filename, durationStr, dateStr)
+    }
+
+    private fun getTimeStamp(duration: Int) = buildString {
+        if (duration / 3600 < 10) append("0")
+        append(duration / 3600)
+        append(":")
+        if ((duration % 3600) / 60 < 10) append("0")
+        append((duration % 3600) / 60)
+        append(":")
+        if (duration % 60 < 10) append("0")
+        append(duration % 60)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
