@@ -11,6 +11,14 @@ object AudioPlayer : MediaController.MediaPlayerControl {
     var listener: MediaPlayer.OnPreparedListener? = null
 
     fun ready(path: String) {
+        if (isPlaying) {
+            mediaPlayer?.run {
+                stop()
+                reset()
+                release()
+            }
+        }
+
         filepath = path
         mediaPlayer = MediaPlayer().apply {
             try {
@@ -35,6 +43,7 @@ object AudioPlayer : MediaController.MediaPlayerControl {
     override fun getDuration() = mediaPlayer?.duration ?: 0
 
     override fun getCurrentPosition() = mediaPlayer?.currentPosition ?: 0
+
 
     override fun seekTo(pos: Int) {
         mediaPlayer?.seekTo(pos)

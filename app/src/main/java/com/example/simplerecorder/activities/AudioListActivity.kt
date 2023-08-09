@@ -5,7 +5,10 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
+import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +22,18 @@ import java.io.File
 class AudioListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioListBinding
     private val dataList = mutableListOf<AudioData>()
+    private val handler = Handler(Looper.getMainLooper())
+    private val seekBarAction: Runnable = object : Runnable {
+        override fun run() {
+            if (AudioPlayer.isPlaying) {
+                binding.customMediaController.seekBar.progress = AudioPlayer.currentPosition
+                handler.postDelayed(this, 1L)
+            } else {
+                binding.customMediaController.playButton.setImageResource(R.drawable.baseline_play_arrow_24)
+                handler.removeCallbacks(this)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +47,8 @@ class AudioListActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = AudioAdapter(dataList)
 
+        initListeners()
+
         if (isExternalStorageReadable()) {
             val dir = Environment.getExternalStorageDirectory().absolutePath + "/Simple Recorder"
             if (!File(dir).exists()) {
@@ -42,53 +59,12 @@ class AudioListActivity : AppCompatActivity() {
                 dataList.add(getAudioData(it.absolutePath))
                 binding.recyclerView.adapter?.notifyItemInserted(dataList.lastIndex)
             }
-
-            AudioPlayer.listener = MediaPlayer.OnPreparedListener {
-                binding.customMediaController.playButton.setImageResource(R.drawable.baseline_play_arrow_24)
-
-                val mmr = MediaMetadataRetriever().apply {
-                    setDataSource(applicationContext, Uri.parse(AudioPlayer.filepath))
-                }
-                val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!! / 1000
-
-                binding.customMediaController.timeStamp1.text = "00:00:00"
-                binding.customMediaController.timeStamp2.text = getTimeStamp(duration)
-
-                binding.customMediaController.seekBar.max = duration
-                binding.customMediaController.seekBar.progress = 0
-            }
-            AudioPlayer.ready(File(dir).listFiles()?.get(0)!!.absolutePath)
         }
+    }
 
-        binding.customMediaController.backwardButton.setOnClickListener {
-            val progress = binding.customMediaController.seekBar.progress
-            binding.customMediaController.seekBar.progress = if (progress <= 5) 0 else (progress - 5)
-        }
-
-        binding.customMediaController.playButton.setOnClickListener {
-            binding.customMediaController.playButton.setImageResource(R.drawable.baseline_pause_40)
-            AudioPlayer.start()
-        }
-
-        binding.customMediaController.forwardButton.setOnClickListener {
-            val progress = binding.customMediaController.seekBar.progress
-            val max = binding.customMediaController.seekBar.max
-            binding.customMediaController.seekBar.progress = if (progress + 5 >= max) max else (progress + 5)
-        }
-
-        binding.customMediaController.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                binding.customMediaController.timeStamp1.text = getTimeStamp(progress)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                binding.customMediaController.timeStamp1.text = getTimeStamp(seekBar.progress)
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                binding.customMediaController.timeStamp1.text = getTimeStamp(seekBar.progress)
-            }
-        })
+    override fun onStart() {
+        super.onStart()
+        binding.customMediaController.root.visibility = View.INVISIBLE
     }
 
     override fun onStop() {
@@ -103,7 +79,67 @@ class AudioListActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        AudioPlayer.mediaPlayer?.run {
+            stop()
+            reset()
+            release()
+        }
         AudioPlayer.mediaPlayer = null
+    }
+
+    private fun initListeners() {
+        AudioPlayer.listener = MediaPlayer.OnPreparedListener {
+            val mmr = MediaMetadataRetriever().apply {
+                setDataSource(applicationContext, Uri.parse(AudioPlayer.filepath))
+            }
+            val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()!!
+
+            binding.customMediaController.root.visibility = View.VISIBLE
+            binding.customMediaController.playButton.setImageResource(R.drawable.baseline_play_arrow_24)
+            binding.customMediaController.timeStamp1.text = "00:00:00"
+            binding.customMediaController.timeStamp2.text = getTimeStamp(duration / 1000)
+            binding.customMediaController.seekBar.max = duration
+            binding.customMediaController.seekBar.progress = 0
+        }
+
+        binding.customMediaController.backwardButton.setOnClickListener {
+            val progress = binding.customMediaController.seekBar.progress
+            binding.customMediaController.seekBar.progress = progress - 5000
+            AudioPlayer.seekTo(binding.customMediaController.seekBar.progress)
+        }
+
+        binding.customMediaController.playButton.setOnClickListener {
+            if (!AudioPlayer.isPlaying) {
+                binding.customMediaController.playButton.setImageResource(R.drawable.baseline_pause_40)
+                AudioPlayer.start()
+                handler.post(seekBarAction)
+            } else {
+                binding.customMediaController.playButton.setImageResource(R.drawable.baseline_play_arrow_24)
+                AudioPlayer.pause()
+                handler.removeCallbacks(seekBarAction)
+            }
+        }
+
+        binding.customMediaController.forwardButton.setOnClickListener {
+            val progress = binding.customMediaController.seekBar.progress
+            binding.customMediaController.seekBar.progress = progress + 5000
+            AudioPlayer.seekTo(binding.customMediaController.seekBar.progress)
+        }
+
+        binding.customMediaController.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                binding.customMediaController.timeStamp1.text = getTimeStamp(progress / 1000)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                binding.customMediaController.timeStamp1.text = getTimeStamp(seekBar.progress / 1000)
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                binding.customMediaController.timeStamp1.text = getTimeStamp(seekBar.progress / 1000)
+                AudioPlayer.seekTo(seekBar.progress)
+            }
+        })
     }
 
     // Checks if a volume containing external storage is available to at least read.
@@ -142,8 +178,19 @@ class AudioListActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            finish()
+            onBackPressed()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        AudioPlayer.mediaPlayer?.run {
+            stop()
+            reset()
+            release()
+        }
+        AudioPlayer.mediaPlayer = null
+        finish()
     }
 }
