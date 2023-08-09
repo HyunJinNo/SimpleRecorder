@@ -26,7 +26,7 @@ class RecordingActivity : AppCompatActivity() {
     private var permissions: Array<String> = arrayOf(
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
     )
 
     companion object {
@@ -40,12 +40,13 @@ class RecordingActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionToRecordAccepted = if (requestCode == REQUEST_PERMISSIONS) {
-            grantResults[0] == PackageManager.PERMISSION_GRANTED
+            grantResults.all { it == PackageManager.PERMISSION_GRANTED }
         } else {
             false
         }
 
         if (!permissionToRecordAccepted) {
+            Toast.makeText(applicationContext, "앱 권한을 허용해주세요.", Toast.LENGTH_SHORT).show()
             finish()
         }
     }
@@ -123,7 +124,7 @@ class RecordingActivity : AppCompatActivity() {
         binding.recordButton.setOnClickListener {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             if (prefs.getBoolean("foregroundSetting", false)) {
-                Toast.makeText(applicationContext, "포어그라운드 서비스가 동작 중입니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "포그라운드 서비스가 동작 중입니다.", Toast.LENGTH_SHORT).show()
             } else {
                 when (AudioRecorder.recordingState) {
                     RecordingState.BEFORE_RECORDING -> {
