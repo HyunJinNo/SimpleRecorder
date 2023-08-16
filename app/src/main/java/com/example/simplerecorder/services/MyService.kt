@@ -3,11 +3,16 @@ package com.example.simplerecorder.services
 import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.os.IBinder
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.example.simplerecorder.receivers.MyReceiver
 import com.example.simplerecorder.utils.NotificationGenerator
 import com.example.simplerecorder.R
+import com.example.simplerecorder.utils.AudioRecorder
+import com.example.simplerecorder.utils.AudioTimer
+import com.example.simplerecorder.utils.RecordingState
 
 class MyService : Service() {
     private var myReceiver: MyReceiver? = null
@@ -50,8 +55,16 @@ class MyService : Service() {
             }
         }
 
-        val notification = NotificationGenerator.generateNotification(this, R.layout.custom_notification)
-        startForeground(NOTIFICATION_ID, notification)
+        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val mode = prefs.getBoolean("foregroundType", false)
+
+        if (mode) {
+            val notification = NotificationGenerator.generateNotification(this, R.layout.custom_notification2)
+            startForeground(NOTIFICATION_ID, notification)
+        } else {
+            val notification = NotificationGenerator.generateNotification(this, R.layout.custom_notification)
+            startForeground(NOTIFICATION_ID, notification)
+        }
 
         return START_REDELIVER_INTENT
     }
@@ -59,6 +72,12 @@ class MyService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Toast.makeText(applicationContext, "서비스 종료", Toast.LENGTH_SHORT).show()
+
+        if (AudioRecorder.recordingState != RecordingState.BEFORE_RECORDING) {
+            Toast.makeText(this, "녹음 종료", Toast.LENGTH_SHORT).show()
+            AudioTimer.stopTimer()
+            AudioRecorder.stopRecording()
+        }
 
         // 서비스가 종료될 때 브로드캐스트 리시버 등록도 해제
         myReceiver?.let {
