@@ -33,9 +33,6 @@ class SettingsActivity : AppCompatActivity() {
         val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         prefs.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
-                "soundQuality" -> {
-                    // TODO
-                }
                 "foregroundSetting" -> {
                     val flag = prefs.getBoolean("foregroundSetting", false)
                     val intent = Intent(applicationContext, MyService::class.java)
@@ -43,6 +40,14 @@ class SettingsActivity : AppCompatActivity() {
                         startService(intent)
                     } else {
                         stopService(intent)
+                    }
+                }
+                "foregroundType" -> {
+                    val mode = prefs.getBoolean("foregroundType", false)
+                    if (mode) {
+
+                    } else {
+
                     }
                 }
                 else -> {}

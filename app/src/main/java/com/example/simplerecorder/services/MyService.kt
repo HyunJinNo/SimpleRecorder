@@ -24,7 +24,6 @@ class MyService : Service() {
         if (myReceiver == null) {
             myReceiver = MyReceiver()
             val filter = IntentFilter().apply {
-                addAction(Intent.ACTION_SCREEN_OFF)
                 addAction(Intent.ACTION_SCREEN_ON)
                 addAction(Intent.ACTION_TIME_TICK)
             }
@@ -43,8 +42,8 @@ class MyService : Service() {
                 if (myReceiver == null) {
                     myReceiver = MyReceiver()
                     val filter = IntentFilter().apply {
-                        addAction(Intent.ACTION_SCREEN_OFF)
                         addAction(Intent.ACTION_SCREEN_ON)
+                        addAction(Intent.ACTION_TIME_TICK)
                     }
                     registerReceiver(myReceiver, filter)
                 }

@@ -6,4 +6,11 @@
     <!-- Settings Preferences -->
     <string name="sound_quality_title">녹음 음질</string>
     <string name="foreground_title">포그라운드 서비스</string>
+    <string name="foreground_type_title">호신 모드</string>
+
+    <!-- Summary -->
+    <string name="foreground_summary_off">앱 내에서 녹음을 수행합니다.</string>
+    <string name="foreground_summary_on">포그라운드에서 녹음을 수행합니다.</string>
+    <string name="foreground_type_summary_off">알림창의 버튼을 눌러 녹음을 수행합니다.</string>
+    <string name="foreground_type_summary_on">매 분마다 휴대폰 화면이 5번 켜지면\n자동으로 녹음을 수행합니다.</string>
 </resources>

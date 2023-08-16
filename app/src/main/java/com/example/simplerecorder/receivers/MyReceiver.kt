@@ -29,17 +29,10 @@ class MyReceiver : BroadcastReceiver() {
                 count.set(0)
                 Log.i("SimpleRecorder", "count 리셋: ${count.get()}")
             }
-            Intent.ACTION_SCREEN_OFF -> {
-                val num = count.incrementAndGet()
-                Log.i("SimpleRecorder", "count: ${count.get()}")
-                if (num == 10) {
-                    startRecording(context)
-                }
-            }
             Intent.ACTION_SCREEN_ON -> {
                 val num = count.incrementAndGet()
                 Log.i("SimpleRecorder", "count: ${count.get()}")
-                if (num == 10) {
+                if (num == 5) {
                     startRecording(context)
                 }
             }
