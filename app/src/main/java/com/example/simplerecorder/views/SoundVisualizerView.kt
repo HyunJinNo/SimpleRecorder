@@ -2,6 +2,7 @@ package com.example.simplerecorder.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class SoundVisualizerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val amplitudePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.black)
+        color = context.getColor(R.color.backgroundBlue)
         strokeWidth = LINE_WIDTH
         strokeCap = Paint.Cap.ROUND
     }
