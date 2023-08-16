@@ -59,10 +59,14 @@ class MyService : Service() {
         val mode = prefs.getBoolean("foregroundType", false)
 
         if (mode) {
-            val notification = NotificationGenerator.generateNotification(this, R.layout.custom_notification2)
+            val notification = NotificationGenerator.generateNotification(
+                this, R.layout.custom_notification2
+            )
             startForeground(NOTIFICATION_ID, notification)
         } else {
-            val notification = NotificationGenerator.generateNotification(this, R.layout.custom_notification)
+            val notification = NotificationGenerator.generateNotification(
+                this, R.layout.custom_notification
+            )
             startForeground(NOTIFICATION_ID, notification)
         }
 

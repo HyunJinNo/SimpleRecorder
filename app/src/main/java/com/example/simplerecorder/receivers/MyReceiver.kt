@@ -3,9 +3,11 @@ package com.example.simplerecorder.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Vibrator
 import android.util.Log
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.example.simplerecorder.utils.AudioRecorder
 import com.example.simplerecorder.utils.NotificationGenerator
 import com.example.simplerecorder.R
@@ -30,10 +32,14 @@ class MyReceiver : BroadcastReceiver() {
                 Log.i("SimpleRecorder", "count 리셋: ${count.get()}")
             }
             Intent.ACTION_SCREEN_ON -> {
-                val num = count.incrementAndGet()
-                Log.i("SimpleRecorder", "count: ${count.get()}")
-                if (num == 5) {
-                    startRecording(context)
+                val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val mode = prefs.getBoolean("foregroundType", false)
+                if (mode) {
+                    val num = count.incrementAndGet()
+                    Log.i("SimpleRecorder", "count: ${count.get()}")
+                    if (num == 5) {
+                        startRecording(context)
+                    }
                 }
             }
             ACTION_RECORD -> {
@@ -43,8 +49,7 @@ class MyReceiver : BroadcastReceiver() {
                         AudioTimer.startTimer(object : TimerTask() {
                             override fun run() {
                                 NotificationGenerator.notifyNotification(
-                                    context,
-                                    R.layout.custom_notification_recording
+                                    context, R.layout.custom_notification_recording
                                 )
                             }
                         })
@@ -53,8 +58,7 @@ class MyReceiver : BroadcastReceiver() {
                     RecordingState.ON_RECORDING -> {
                         Toast.makeText(context, "녹음 일시 정지", Toast.LENGTH_SHORT).show()
                         NotificationGenerator.notifyNotification(
-                            context,
-                            R.layout.custom_notification_pause
+                            context, R.layout.custom_notification_pause
                         )
                         AudioTimer.pauseTimer()
                         AudioRecorder.pauseRecording()
@@ -64,8 +68,7 @@ class MyReceiver : BroadcastReceiver() {
                         AudioTimer.resumeTimer(object : TimerTask() {
                             override fun run() {
                                 NotificationGenerator.notifyNotification(
-                                    context,
-                                    R.layout.custom_notification_recording
+                                    context, R.layout.custom_notification_recording
                                 )
                             }
                         })
@@ -76,13 +79,27 @@ class MyReceiver : BroadcastReceiver() {
             ACTION_STOP -> {
                 Toast.makeText(context, "녹음 종료", Toast.LENGTH_SHORT).show()
                 AudioTimer.stopTimer()
-                NotificationGenerator.notifyNotification(context, R.layout.custom_notification)
+                val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val mode = prefs.getBoolean("foregroundType", false)
+                if (mode) {
+                    NotificationGenerator.notifyNotification(context, R.layout.custom_notification2)
+                    count.set(0)
+                } else {
+                    NotificationGenerator.notifyNotification(context, R.layout.custom_notification)
+                }
                 AudioRecorder.stopRecording()
             }
             ACTION_CANCEL -> {
                 Toast.makeText(context, "녹음 취소", Toast.LENGTH_SHORT).show()
                 AudioTimer.stopTimer()
-                NotificationGenerator.notifyNotification(context, R.layout.custom_notification)
+                val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val mode = prefs.getBoolean("foregroundType", false)
+                if (mode) {
+                    NotificationGenerator.notifyNotification(context, R.layout.custom_notification2)
+                    count.set(0)
+                } else {
+                    NotificationGenerator.notifyNotification(context, R.layout.custom_notification)
+                }
                 AudioRecorder.cancelRecording()
             }
             else -> {
