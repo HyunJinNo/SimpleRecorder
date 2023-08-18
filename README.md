@@ -12,3 +12,12 @@ A simple android application for audio recording and audio playing.
 <img src="screenshots/Screenshot5.jpg" width=400> <img src="screenshots/Screenshot6.jpg" width=400>
 
 <img src="screenshots/Screenshot7.jpg" width=400> <img src="screenshots/Screenshot8.jpg" width=400>
+
+<br/>
+
+## Libraries
+Some features are available as libraries in the given link.
+
+https://github.com/HyunJinNo/SimpleAudioController
+
+https://github.com/HyunJinNo/ForegroundAudioRecorder
