@@ -176,7 +176,10 @@ class RecordingActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_list -> {
-            if (AudioRecorder.recorder != null) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            if (prefs.getBoolean("foregroundSetting", false)) {
+                Toast.makeText(applicationContext, "포그라운드 서비스를 종료해야 접근할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            } else if (AudioRecorder.recorder != null) {
                 when (AudioRecorder.recordingState) {
                     RecordingState.ON_RECORDING -> {
                         pauseRecording()
@@ -226,7 +229,10 @@ class RecordingActivity : AppCompatActivity() {
             true
         }
         R.id.action_settings -> {
-            if (AudioRecorder.recorder != null) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            if (prefs.getBoolean("foregroundSetting", false)) {
+                startActivity(Intent(this@RecordingActivity, SettingsActivity::class.java))
+            } else if (AudioRecorder.recorder != null) {
                 when (AudioRecorder.recordingState) {
                     RecordingState.ON_RECORDING -> {
                         pauseRecording()
@@ -280,7 +286,10 @@ class RecordingActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (AudioRecorder.recorder != null) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        if (prefs.getBoolean("foregroundSetting", false)) {
+            finish()
+        } else if (AudioRecorder.recorder != null) {
             when (AudioRecorder.recordingState) {
                 RecordingState.ON_RECORDING -> {
                     pauseRecording()
